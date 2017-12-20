@@ -638,6 +638,16 @@ if (!appshell.app) {
     appshell.app.getRemoteDebuggingPort = function () {
         return GetRemoteDebuggingPort();
     };
+    
+    
+    /**
+     * Get the process id of currently running browser process
+     * @param {function} callback - callback function 
+     */
+    native function GetBracketsPID();
+    appshell.app.getBracketsPID = function (callback) {
+        GetBracketsPID(callback || _dummyCallback);
+    };
  
     /**
      * Set menu enabled/checked state.

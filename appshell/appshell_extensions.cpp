@@ -507,6 +507,18 @@ public:
                 error = CopyFile(src, dest);
                 // No additional response args for this function
             }
+        } else if (message_name == "GetBracketsPID") {
+            // Parameters:
+            //  0: int32 - callback id
+            
+            if (argList->GetSize() != 1) {
+                error = ERR_INVALID_PARAMS;
+            }
+            
+            if (error == NO_ERROR) {
+                int pid = GetBracketsPID();            
+				responseArgs->SetInt(2, pid);
+			}
         } else if (message_name == "GetDroppedFiles") {
             // Parameters:
             //  0: int32 - callback id
