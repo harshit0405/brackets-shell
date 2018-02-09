@@ -194,6 +194,8 @@
       'appshell/client_handler.h',
       'appshell/native_menu_model.cpp',
       'appshell/native_menu_model.h',
+      'appshell/update.h',
+      'appshell/update_win.cpp',
     ],
     'appshell_sources_common': [
       'appshell/cefclient.cpp',

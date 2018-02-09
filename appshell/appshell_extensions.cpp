@@ -34,6 +34,7 @@
 #endif
 
 #include <algorithm>
+#include "update.h"
 
 extern std::vector<CefString> gDroppedFiles;
 
@@ -507,19 +508,43 @@ public:
                 error = CopyFile(src, dest);
                 // No additional response args for this function
             }
-        } else if (message_name == "GetBracketsPID") {
-            // Parameters:
-            //  0: int32 - callback id
-            
-            if (argList->GetSize() != 1) {
-                error = ERR_INVALID_PARAMS;
-            }
-            
-            if (error == NO_ERROR) {
-                int pid = GetBracketsPID();            
-				responseArgs->SetInt(2, pid);
+        } else if (message_name == "SetUpdateParamsAndRunUpdate") {
+			// Parameters:
+			//  0: int32 - callback id
+			//  1: string - installerFilePath
+			//  2: string - installerLogFilePath(optional)	//AUTOUPDATE_PRERELEASE
+
+			size_t numArgs = argList->GetSize();
+			if (numArgs < 2 ||
+				argList->GetType(1) != VTYPE_STRING) {
+				error = ERR_INVALID_PARAMS;
 			}
-        } else if (message_name == "GetDroppedFiles") {
+			ExtensionString logFilePath;
+			
+			if (numArgs == 3) {
+				if (argList->GetType(2) == VTYPE_STRING) {
+					logFilePath = argList->GetString(2);
+				} 			
+			}
+			if (error == NO_ERROR) {
+				ExtensionString installerPath;
+				installerPath = argList->GetString(1);
+				UpdateHelper::SetInstallerCommandLineArgs(installerPath, logFilePath);
+			}
+		}
+		else if (message_name == "IsAutoUpdateInProgress") {
+			// Parameters:
+			//  0: int32 - callback id
+
+			if (argList->GetSize() != 1) {
+				error = ERR_INVALID_PARAMS;
+			}
+			if (error == NO_ERROR) {
+				bool isAutoUpdateInProgress = UpdateHelper::IsAutoUpdateInProgress();
+				responseArgs->SetInt(2, isAutoUpdateInProgress);
+			}
+
+		} else if (message_name == "GetDroppedFiles") {
             // Parameters:
             //  0: int32 - callback id
             if (argList->GetSize() != 1) {

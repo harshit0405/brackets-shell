@@ -644,16 +644,29 @@ if (!brackets) {
         return GetRemoteDebuggingPort();
     };
     
-    
     /**
-     * Get the process id of currently running browser process
-     * @param {function} callback - callback function 
+     * Set the parameters for auto update, to be used by installer as command line arguments.
+     *
+     * @param {string} installerPath - The path of the installer file
+     * @param(optional) {string} logFilePath - The path of the installer log file
+     * @param {function(err)=} callback Asynchronous callback function. 
+     * @return None. 
      */
-    native function GetBracketsPID();
-    appshell.app.getBracketsPID = function (callback) {
-        GetBracketsPID(callback || _dummyCallback);
-    };
+    native function SetUpdateParamsAndRunUpdate();
+    appshell.app.setUpdateParamsAndQuit = function (installerPath, logFilePath, callback) {
+        SetUpdateParamsAndRunUpdate(callback || _dummyCallback, installerPath, logFilePath);
+    }
  
+    /**
+    * Check if auto update is in progress
+    * @param {function(err)=} callback Asynchronous callback function. 
+    * @return None. This is an asynchronous call that sends all return information to the callback.
+    */
+    native function IsAutoUpdateInProgress();
+        appshell.app.isAutoUpdateInProgress = function (callback) {
+            IsAutoUpdateInProgress(callback || _dummyCallback);
+    }
+
     /**
      * Set menu enabled/checked state.
      * @param {string} command ID of the menu item.

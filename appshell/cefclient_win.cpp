@@ -326,6 +326,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
   // Shut down CEF.
   CefShutdown();
 
+  // Run the app auto update
+  UpdateHelper::RunAppUpdate();
+
   // release the first instance mutex
   if (hMutex != NULL)
 	  ReleaseMutex(hMutex);
