@@ -2299,9 +2299,3 @@ std::string GetSystemUniqueID()
 	
 	return buf;
 }
-
-int GetBracketsPID()
-{
-    // return the pid of currently running process
-	return (int)GetCurrentProcessId();
-}
