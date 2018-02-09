@@ -212,5 +212,3 @@ int32 GetMenuPosition(CefRefPtr<CefBrowser> browser, const ExtensionString& comm
 void DragWindow(CefRefPtr<CefBrowser> browser);
 
 std::string GetSystemUniqueID();
-
-int GetBracketsPID();

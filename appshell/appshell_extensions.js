@@ -644,6 +644,7 @@ if (!brackets) {
         return GetRemoteDebuggingPort();
     };
     
+    
     /**
      * Set the parameters for auto update, to be used by installer as command line arguments.
      *
