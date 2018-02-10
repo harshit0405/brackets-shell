@@ -21,7 +21,7 @@
  *
  */
 
-"use strict";
+"use strict"; 
 
 module.exports = function (grunt) {
     var common  = require("./tasks/common")(grunt),
