@@ -238,6 +238,7 @@
         
         <InstallExecuteSequence>
             <Custom Action="BroadcastEnvironmentVariablesChange" After="InstallFinalize"/> 
+            <DisableRollback Before="CostFinalize" />
             <Custom Action="InstallDirCustomAction" Before="CostFinalize">LAUNCH_APPLICATION_SILENT = 1</Custom>
             <Custom Action="LaunchApplication" After="InstallFinalize">LAUNCH_APPLICATION_SILENT = 1</Custom>
             <Custom Action="LaunchApplicationCancel" OnExit="cancel">LAUNCH_APPLICATION_SILENT = 1</Custom>
