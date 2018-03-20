@@ -12,6 +12,12 @@ namespace LaunchBrackets
     {
 
         [CustomAction]
+        public static ActionResult LaunchBracketsSuccess(Session session)
+        {
+            return LaunchBracketsHandler(session, "success");
+        }
+
+        [CustomAction]
         public static ActionResult LaunchBracketsError(Session session)
         {
             return LaunchBracketsHandler(session, "error");
