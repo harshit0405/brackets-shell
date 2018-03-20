@@ -66,16 +66,20 @@ namespace LaunchBrackets
             session.Log("Begin LaunchBrackets");
 
             string appdata = Environment.GetEnvironmentVariable("APPDATA");
-            string installerStateFile = appdata + "\\Brackets\\updateTemp\\updateHelper.json";
+            string fileDirectory = appdata + "\\Brackets\\updateTemp";
+            string installerStateFile = fileDirectory + "\\updateHelper.json";
             JObject parsedJSON = LoadJson(installerStateFile);
-            parsedJSON.Add(new JProperty("state", status));
+            parsedJSON["state"] = "cancel";
 
-            session.Log("Writing InstallerState to " + installerStateFile);
+            Console.WriteLine("Writing InstallerState to " + installerStateFile);
+
+            //It will create if dir does not exist
+            System.IO.Directory.CreateDirectory(fileDirectory);
             using (System.IO.StreamWriter file =
                 new System.IO.StreamWriter(installerStateFile))
             {
-                session.Log("Writing: " + parsedJSON.ToString());
-                
+                Console.WriteLine("Writing: " + parsedJSON.ToString());
+
             }
 
             using (StreamWriter file = File.CreateText(installerStateFile))
