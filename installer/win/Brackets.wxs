@@ -127,19 +127,19 @@
                       Return="check"
                       Execute="immediate"
                       BinaryKey="BracketsExecutor.dll"
-                      DllEntry="LaunchBrackets" />
+                      DllEntry="LaunchBracketsCancel" />
         
         <CustomAction Id="LaunchApplicationError"
                       Return="check"
                       Execute="immediate"
                       BinaryKey="BracketsExecutor.dll"
-                      DllEntry="LaunchBrackets" />
+                      DllEntry="LaunchBracketsError" />
         
         <CustomAction Id="LaunchApplicationSuspend"
                       Return="check"
                       Execute="immediate"
                       BinaryKey="BracketsExecutor.dll"
-                      DllEntry="LaunchBrackets" />
+                      DllEntry="LaunchBracketsSuspend" />
 
         <Property Id="INSTALLDIRREGISTRY">
             <RegistrySearch Id="InstallDirRegistryID"
