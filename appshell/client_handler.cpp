@@ -202,7 +202,11 @@ bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser,
 }
 
 void ClientHandler::OnLoadStart(CefRefPtr<CefBrowser> browser,
-                                CefRefPtr<CefFrame> frame) {
+                                CefRefPtr<CefFrame> frame
+                                #ifdef OS_LINUX
+                                  ,TransitionType transition_type
+                                #endif
+                                ) {
   CEF_REQUIRE_UI_THREAD();
 
   if (m_BrowserId == browser->GetIdentifier() && frame->IsMain()) {
@@ -356,7 +360,7 @@ bool ClientHandler::OnContextMenuCommand(
     EventFlags event_flags) {
   switch (command_id) {
     case CLIENT_ID_SHOW_DEVTOOLS:
-      ShowDevTools(browser);
+      ShowDevTools(browser, CefPoint());
       return true;
     default:  // Allow default handling, if any.
       return false;
@@ -399,7 +403,8 @@ std::string ClientHandler::GetLastDownloadFile() {
   return m_LastDownloadFile;
 }
 
-void ClientHandler::ShowDevTools(CefRefPtr<CefBrowser> browser) {
+void ClientHandler::ShowDevTools(CefRefPtr<CefBrowser> browser,
+                    const CefPoint& inspect_element_at) {
     CefWindowInfo wi;
     CefBrowserSettings settings;
 

@@ -171,8 +171,6 @@
       'appshell/browser/root_window_manager.cc',
       'appshell/browser/root_window_manager.h',
       'appshell/browser/temp_window.h',
-      'appshell/browser/window_test.cc',
-      'appshell/browser/window_test.h',
     ],
     'appshell_sources_common_helper': [
       'appshell/common/client_switches.cc',
@@ -196,6 +194,8 @@
       'appshell/client_handler.h',
       'appshell/native_menu_model.cpp',
       'appshell/native_menu_model.h',
+      'appshell/update.h',
+      'appshell/update_win.cpp',
     ],
     'appshell_sources_common': [
       'appshell/cefclient.cpp',
@@ -380,7 +380,6 @@
       'appshell/browser/root_window_gtk.h',
       'appshell/browser/temp_window_x11.cc',
       'appshell/browser/temp_window_x11.h',
-      'appshell/browser/window_test_gtk.cc',
       'appshell/cefclient_gtk.cc',
 
       'appshell/appshell_extensions_gtk.cpp',

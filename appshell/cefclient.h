@@ -9,6 +9,7 @@
 #include <string>
 #include "include/cef_base.h"
 #include "client_app.h"
+#include "update.h"
 
 class CefApp;
 class CefBrowser;

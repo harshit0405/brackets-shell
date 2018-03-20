@@ -126,7 +126,11 @@ virtual bool OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
   // CefLoadHandler methods
   virtual void OnLoadStart(CefRefPtr<CefBrowser> browser,
-                           CefRefPtr<CefFrame> frame) OVERRIDE;
+                           CefRefPtr<CefFrame> frame
+                    #ifdef OS_LINUX
+                           ,TransitionType transition_type
+                    #endif
+                           ) OVERRIDE;
   virtual void OnLoadEnd(CefRefPtr<CefBrowser> browser,
                          CefRefPtr<CefFrame> frame,
                          int httpStatusCode) OVERRIDE;
@@ -212,7 +216,8 @@ virtual bool OnBeforePopup(CefRefPtr<CefBrowser> browser,
   void SendNotification(NotificationType type);
   void CloseMainWindow();
 
-  void ShowDevTools(CefRefPtr<CefBrowser> browser);  
+  virtual void ShowDevTools(CefRefPtr<CefBrowser> browserShowDevTools,
+                    const CefPoint& inspect_element_at);
                         
   // Call the "executeCommand" method, passing the command name.
   // If callback is specified, it will be called with the result from the command.

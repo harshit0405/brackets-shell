@@ -28,7 +28,13 @@
 #include "appshell_node_process.h"
 #include "config.h"
 
+#ifdef OS_LINUX
+#include "appshell/browser/main_context.h"
+#include "appshell/browser/root_window_manager.h"
+#endif
+
 #include <algorithm>
+#include "update.h"
 
 extern std::vector<CefString> gDroppedFiles;
 
@@ -394,10 +400,15 @@ public:
             CefWindowInfo wi;
             CefBrowserSettings settings;
 
-#if defined(OS_WIN)
-            wi.SetAsPopup(NULL, "DevTools");
-#endif
-            browser->GetHost()->ShowDevTools(wi, browser->GetHost()->GetClient(), settings, CefPoint());
+            #if defined(OS_WIN)
+                wi.SetAsPopup(NULL, "DevTools");
+            #elif defined(OS_LINUX)
+                handler->ShowDevTools(browser, CefPoint());
+            #endif
+
+            #ifndef OS_LINUX
+                browser->GetHost()->ShowDevTools(wi, browser->GetHost()->GetClient(), settings, CefPoint());
+            #endif
 
         } else if (message_name == "GetNodeState") {
             // Parameters:
@@ -423,7 +434,15 @@ public:
 
             // The DispatchCloseToNextBrowser() call initiates a quit sequence. The app will
             // quit if all browser windows are closed.
-            handler->DispatchCloseToNextBrowser();
+            #ifdef OS_LINUX
+                if(client::MainContext::Get() && 
+                    client::MainContext::Get()->GetRootWindowManager()){
+                    client::MainContext::Get()->GetRootWindowManager()->DispatchCloseToNextWindow();
+                }
+            #else
+                handler->DispatchCloseToNextBrowser();
+            #endif
+            
 
         } else if (message_name == "AbortQuit") {
             // Parameters - none
@@ -489,7 +508,43 @@ public:
                 error = CopyFile(src, dest);
                 // No additional response args for this function
             }
-        } else if (message_name == "GetDroppedFiles") {
+        } else if (message_name == "SetUpdateParamsAndRunUpdate") {
+			// Parameters:
+			//  0: int32 - callback id
+			//  1: string - installerFilePath
+			//  2: string - installerLogFilePath(optional)	//AUTOUPDATE_PRERELEASE
+
+			size_t numArgs = argList->GetSize();
+			if (numArgs < 2 ||
+				argList->GetType(1) != VTYPE_STRING) {
+				error = ERR_INVALID_PARAMS;
+			}
+			ExtensionString logFilePath;
+			
+			if (numArgs == 3) {
+				if (argList->GetType(2) == VTYPE_STRING) {
+					logFilePath = argList->GetString(2);
+				} 			
+			}
+			if (error == NO_ERROR) {
+				ExtensionString installerPath;
+				installerPath = argList->GetString(1);
+				UpdateHelper::SetInstallerCommandLineArgs(installerPath, logFilePath);
+			}
+		}
+		else if (message_name == "IsAutoUpdateInProgress") {
+			// Parameters:
+			//  0: int32 - callback id
+
+			if (argList->GetSize() != 1) {
+				error = ERR_INVALID_PARAMS;
+			}
+			if (error == NO_ERROR) {
+				bool isAutoUpdateInProgress = UpdateHelper::IsAutoUpdateInProgress();
+				responseArgs->SetInt(2, isAutoUpdateInProgress);
+			}
+
+		} else if (message_name == "GetDroppedFiles") {
             // Parameters:
             //  0: int32 - callback id
             if (argList->GetSize() != 1) {
@@ -765,8 +820,53 @@ public:
 			//  0: int32 - callback id
 
 			responseArgs->SetString(2, GetSystemUniqueID());
-		}
-		else {
+		} 
+        else if (message_name == "ReadDirWithStats") {
+            // Parameters:
+            //  0: int32 - callback id
+            
+            CefRefPtr<CefListValue> uberDict    = CefListValue::Create();
+            CefRefPtr<CefListValue> dirContents = CefListValue::Create();
+            CefRefPtr<CefListValue> allStats = CefListValue::Create();
+            
+            ExtensionString path = argList->GetString(1);
+            ReadDir(path, dirContents);
+            
+            // Now we iterator through the contents of directoryContents.
+            size_t theSize = dirContents->GetSize();
+            for ( size_t iFileEntry = 0; iFileEntry < theSize ; ++iFileEntry) {
+                CefRefPtr<CefListValue> fileStats = CefListValue::Create();
+
+                #ifdef OS_WIN
+                    ExtensionString theFile  = path + L"/";
+                #else
+                    ExtensionString theFile  = path + "/";
+                #endif
+
+                ExtensionString fileName = dirContents->GetString(iFileEntry);
+                theFile = theFile + fileName;
+                
+                ExtensionString realPath;
+                uint32 modtime;
+                double size;
+                bool isDir;
+                GetFileInfo(theFile, modtime, isDir, size, realPath);
+                
+                fileStats->SetInt(0, modtime);
+                fileStats->SetBool(1, isDir);
+                fileStats->SetInt(2, size);
+                fileStats->SetString(3, realPath);
+                
+                allStats->SetList(iFileEntry, fileStats);
+                
+            }
+            
+            uberDict->SetList(0, dirContents);
+            uberDict->SetList(1, allStats);
+            responseArgs->SetList(2, uberDict);
+        }
+
+        else {
             fprintf(stderr, "Native function not implemented yet: %s\n", message_name.c_str());
             return false;
         }
