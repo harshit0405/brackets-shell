@@ -10,13 +10,6 @@ namespace LaunchBrackets
 {
     public class LaunchBracketsClass
     {
-
-        [CustomAction]
-        public static ActionResult LaunchBracketsSuccess(Session session)
-        {
-            return LaunchBracketsHandler(session, "success");
-        }
-
         [CustomAction]
         public static ActionResult LaunchBracketsError(Session session)
         {
@@ -75,7 +68,7 @@ namespace LaunchBrackets
             string fileDirectory = appdata + "\\Brackets\\updateTemp";
             string installerStateFile = fileDirectory + "\\updateHelper.json";
             JObject parsedJSON = LoadJson(installerStateFile);
-            parsedJSON["state"] = "cancel";
+            parsedJSON["state"] = status;
 
             session.Log("Writing InstallerState to " + installerStateFile);
 

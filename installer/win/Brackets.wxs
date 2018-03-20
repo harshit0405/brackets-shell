@@ -145,7 +145,7 @@
                       Return="check"
                       Execute="immediate"
                       BinaryKey="BracketsExecutor.dll"
-                      DllEntry="LaunchBracketsSuccess" />
+                      DllEntry="LaunchBrackets" />
 
         <Property Id="INSTALLDIRREGISTRY">
             <RegistrySearch Id="InstallDirRegistryID"
@@ -245,7 +245,7 @@
         <InstallExecuteSequence>
             <Custom Action="BroadcastEnvironmentVariablesChange" After="InstallFinalize"/> 
             <Custom Action="InstallDirCustomAction" Before="CostFinalize">LAUNCH_APPLICATION_SILENT = 1</Custom>
-            <Custom Action="LaunchBracketsSuccess" After="InstallFinalize">LAUNCH_APPLICATION_SILENT = 1</Custom>
+            <Custom Action="LaunchApplicationSuccess" After="InstallFinalize">LAUNCH_APPLICATION_SILENT = 1</Custom>
             <Custom Action="LaunchApplicationCancel" OnExit="cancel">LAUNCH_APPLICATION_SILENT = 1</Custom>
             <Custom Action="LaunchApplicationError" OnExit="error">LAUNCH_APPLICATION_SILENT = 1</Custom>
             <Custom Action="LaunchApplicationSuspend" OnExit="suspend">LAUNCH_APPLICATION_SILENT = 1</Custom>
