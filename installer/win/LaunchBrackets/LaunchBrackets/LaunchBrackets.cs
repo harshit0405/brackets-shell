@@ -71,14 +71,14 @@ namespace LaunchBrackets
             JObject parsedJSON = LoadJson(installerStateFile);
             parsedJSON["state"] = "cancel";
 
-            Console.WriteLine("Writing InstallerState to " + installerStateFile);
+            session.Log("Writing InstallerState to " + installerStateFile);
 
             //It will create if dir does not exist
             System.IO.Directory.CreateDirectory(fileDirectory);
             using (System.IO.StreamWriter file =
                 new System.IO.StreamWriter(installerStateFile))
             {
-                Console.WriteLine("Writing: " + parsedJSON.ToString());
+                session.Log("Writing: " + parsedJSON.ToString());
 
             }
 
