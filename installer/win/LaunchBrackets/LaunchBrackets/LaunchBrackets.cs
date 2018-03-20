@@ -74,8 +74,14 @@ namespace LaunchBrackets
             using (System.IO.StreamWriter file =
                 new System.IO.StreamWriter(installerStateFile))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, parsedJSON);
+                session.Log("Writing: " + parsedJSON.ToString());
+                
+            }
+
+            using (StreamWriter file = File.CreateText(installerStateFile))
+            using (JsonTextWriter writer = new JsonTextWriter(file))
+            {
+                parsedJSON.WriteTo(writer);
             }
 
             return ActionResult.Success;
