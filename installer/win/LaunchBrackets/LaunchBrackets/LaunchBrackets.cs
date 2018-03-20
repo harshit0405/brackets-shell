@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Deployment.WindowsInstaller;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchBrackets
 {
@@ -33,6 +35,21 @@ namespace LaunchBrackets
             return LaunchBracketsHandler(session, "success");
         }
 
+        public static JObject LoadJson(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                using (StreamReader r = new StreamReader(fileName))
+                {
+                    string json = r.ReadToEnd();
+                    object parsed = JsonConvert.DeserializeObject(json);
+                    JObject jsonObject = JObject.Parse(parsed.ToString());
+                    return jsonObject;
+                }
+            }
+            return new JObject();
+        }
+
         public static ActionResult LaunchBracketsHandler(Session session, string status)
         {
             session.Log("Begin LaunchBrackets");
@@ -49,15 +66,16 @@ namespace LaunchBrackets
             session.Log("Begin LaunchBrackets");
 
             string appdata = Environment.GetEnvironmentVariable("APPDATA");
-            string installerStateFile = appdata + "\\Brackets\\InstallerState.json";
+            string installerStateFile = appdata + "\\Brackets\\updateTemp\\updateHelper.json";
+            JObject parsedJSON = LoadJson(installerStateFile);
+            parsedJSON.Add(new JProperty("state", status));
 
             session.Log("Writing InstallerState to " + installerStateFile);
             using (System.IO.StreamWriter file =
                 new System.IO.StreamWriter(installerStateFile))
             {
-                file.WriteLine("{");
-                file.WriteLine("'state':" + status);
-                file.WriteLine("}");
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, parsedJSON);
             }
 
             return ActionResult.Success;
